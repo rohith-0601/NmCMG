@@ -1,0 +1,31 @@
+/* ===========================
+   Global App Styling
+   =========================== */
+
+html, body {
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #334155 100%);
+  background-attachment: fixed;
+  color: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Centers your root app and ensures background fills */
+#root {
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Optional — make the scrollbar fit the dark theme */
+/* Hide scrollbars in Chrome, Safari, Edge */
+::-webkit-scrollbar {
+  display: none;
+}
