@@ -90,23 +90,40 @@ def first_non_harshad():
     start = int(data.get("start"))
     end = int(data.get("end"))
 
-    for i in range(start, end + 1):
-        if not is_harshad(i):
-            ds = digit_sum(i)
-            remainder = i % ds
-            fact_val = str(gmpy2.fac(i))
-            return jsonify({
-                "status": "non-harshad-found",
-                "number": i,
-                "digit_sum": ds,
-                "remainder": remainder,
-                "factorial": fact_val
-            })
+    found = []
 
-    return jsonify({
-        "status": "all-harshad",
-        "message": "All numbers in this range are Harshad numbers."
-    })
+    for i in range(start, end + 1):
+        fact_val = gmpy2.fac(i)
+        ds = digit_sum(fact_val)
+        if ds == 0:
+            continue
+        remainder = fact_val % ds
+
+        if remainder != 0:
+            found.append({
+                "n": i,
+                "factorial": str(fact_val),
+                "digit_sum": int(ds),
+                "remainder": int(remainder)
+            })
+            if len(found) == 2:
+                break
+
+    # If no non-Harshad factorials found
+    if not found:
+        return jsonify({
+            "status": "all-harshad",
+            "message": "All factorials in this range are Harshad numbers."
+        })
+
+    # If one or two found, return them
+    response = {
+        "status": "non-harshad-found",
+        "results": found
+    }
+
+    return jsonify(response)
+
 
 
 # ===========================================================

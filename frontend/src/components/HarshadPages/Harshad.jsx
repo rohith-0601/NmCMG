@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Harshad = () => {
+  // -------------------------------
+  // QUESTION A STATES
+  // -------------------------------
   const [q1Start, setQ1Start] = useState("");
   const [q1End, setQ1End] = useState("");
   const [q1Result, setQ1Result] = useState(null);
   const [q1Loading, setQ1Loading] = useState(false);
 
+  // -------------------------------
+  // QUESTION B STATES
+  // -------------------------------
   const [mode, setMode] = useState(null);
   const [startRange, setStartRange] = useState("");
   const [endRange, setEndRange] = useState("");
@@ -14,6 +20,9 @@ const Harshad = () => {
   const [q2Result, setQ2Result] = useState(null);
   const [q2Loading, setQ2Loading] = useState(false);
 
+  // -------------------------------
+  // HANDLE QUESTION A
+  // -------------------------------
   const handleQ1Submit = async (e) => {
     e.preventDefault();
     setQ1Loading(true);
@@ -33,6 +42,9 @@ const Harshad = () => {
     }
   };
 
+  // -------------------------------
+  // HANDLE QUESTION B
+  // -------------------------------
   const handleModeSelect = (m) => {
     setMode(m);
     setQ2Result(null);
@@ -68,6 +80,9 @@ const Harshad = () => {
     }
   };
 
+  // -------------------------------
+  // UI
+  // -------------------------------
   return (
     <div
       className="py-5 px-3 px-md-5"
@@ -75,8 +90,10 @@ const Harshad = () => {
         color: "#e5e7eb",
         minHeight: "100vh",
         fontFamily: "Inter, system-ui, sans-serif",
+        backgroundColor: "#0f172a",
       }}
     >
+      {/* ------------------ HEADER ------------------ */}
       <div className="text-center mb-5">
         <h1
           style={{
@@ -102,8 +119,8 @@ const Harshad = () => {
         }}
       >
         <h4 className="fw-semibold mb-4" style={{ color: "#f8fafc" }}>
-          A. First Factorial that is <span className="text-danger">Not</span> a
-          Harshad Number
+          A. First Factorials that are{" "}
+          <span className="text-danger">Not Harshad Numbers</span>
         </h4>
 
         <form onSubmit={handleQ1Submit} className="row g-3 mb-3">
@@ -154,6 +171,7 @@ const Harshad = () => {
           </div>
         )}
 
+        {/* Display factorial results */}
         {q1Result && !q1Loading && (
           <div
             className="mt-4 p-3 rounded-3"
@@ -164,23 +182,37 @@ const Harshad = () => {
           >
             {q1Result.status === "non-harshad-found" ? (
               <>
-                <h5 className="text-info mb-2">
-                  ❌ First Non-Harshad Number: {q1Result.number}
+                <h5 className="text-info mb-3">
+                  ❌ Non-Harshad Factorials Found
                 </h5>
-                <p className="mb-0 text-secondary">
-                  <strong>Digit Sum:</strong> {q1Result.digit_sum} |{" "}
-                  <strong>Remainder:</strong> {q1Result.remainder}
-                </p>
-                <p
-                  className="mt-3"
-                  style={{
-                    color: "#cbd5e1",
-                    fontSize: "0.9rem",
-                    wordBreak: "break-all",
-                  }}
-                >
-                  <strong>Factorial:</strong> {q1Result.factorial}
-                </p>
+                <table className="table table-dark table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th>n</th>
+                      <th>Digit Sum</th>
+                      <th>Remainder</th>
+                      <th>Factorial (n!)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {q1Result.results.map((item, idx) => (
+                      <tr key={idx}>
+                        <td>{item.n}</td>
+                        <td>{item.digit_sum}</td>
+                        <td>{item.remainder}</td>
+                        <td
+                          style={{
+                            wordBreak: "break-all",
+                            fontSize: "0.85rem",
+                            color: "#cbd5e1",
+                          }}
+                        >
+                          {item.factorial}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </>
             ) : (
               <p className="text-warning">{q1Result.message}</p>
