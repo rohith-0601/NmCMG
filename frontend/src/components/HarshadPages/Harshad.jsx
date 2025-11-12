@@ -80,340 +80,325 @@ const Harshad = () => {
     }
   };
 
-  // -------------------------------
-  // UI
-  // -------------------------------
   return (
-    <div
-      className="py-5 px-3 px-md-5"
-      style={{
-        color: "#e5e7eb",
-        minHeight: "100vh",
-        fontFamily: "Inter, system-ui, sans-serif",
-        backgroundColor: "#0f172a",
-      }}
-    >
-      {/* ------------------ HEADER ------------------ */}
-      <div className="text-center mb-5">
-        <h1
-          style={{
-            fontWeight: 700,
-            fontSize: "2.3rem",
-            color: "#f1f5f9",
-            letterSpacing: "0.5px",
-          }}
-        >
-          Harshad Numbers
-        </h1>
-        <p style={{ color: "#94a3b8" }}>
-          Explore factorials and consecutive Harshad sequences
-        </p>
-      </div>
-
-      {/* ------------------ CARD 1 ------------------ */}
-      <div
-        className="p-4 mb-5 rounded-4 shadow-sm"
-        style={{
-          background: "rgba(255, 255, 255, 0.05)",
-          border: "1px solid rgba(255,255,255,0.1)",
-        }}
-      >
-        <h4 className="fw-semibold mb-4" style={{ color: "#f8fafc" }}>
-          A. First Factorials that are{" "}
-          <span className="text-danger">Not Harshad Numbers</span>
-        </h4>
-
-        <form onSubmit={handleQ1Submit} className="row g-3 mb-3">
-          <div className="col-md-5">
-            <input
-              type="number"
-              className="form-control bg-dark border-0 text-light"
-              placeholder="Start number"
-              value={q1Start}
-              onChange={(e) => setQ1Start(e.target.value)}
-              required
-              style={{ borderRadius: "10px", padding: "10px" }}
-            />
-          </div>
-          <div className="col-md-5">
-            <input
-              type="number"
-              className="form-control bg-dark border-0 text-light"
-              placeholder="End number"
-              value={q1End}
-              onChange={(e) => setQ1End(e.target.value)}
-              required
-              style={{ borderRadius: "10px", padding: "10px" }}
-            />
-          </div>
-          <div className="col-md-2">
-            <button
-              type="submit"
-              className="btn btn-light w-100 fw-semibold"
-              style={{
-                borderRadius: "10px",
-                color: "#0f172a",
-                background: "#f8fafc",
-              }}
-            >
-              Find
-            </button>
-          </div>
-        </form>
-
-        {q1Loading && (
-          <div className="text-center mt-3">
-            <div
-              className="spinner-border text-light"
-              style={{ width: "3rem", height: "3rem" }}
-            ></div>
-            <p className="text-secondary mt-3">Processing...</p>
-          </div>
-        )}
-
-        {/* Display factorial results */}
-        {q1Result && !q1Loading && (
-          <div
-            className="mt-4 p-3 rounded-3"
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            {q1Result.status === "non-harshad-found" ? (
-              <>
-                <h5 className="text-info mb-3">
-                  ❌ Non-Harshad Factorials Found
-                </h5>
-                <table className="table table-dark table-striped table-bordered">
-                  <thead>
-                    <tr>
-                      <th>n</th>
-                      <th>Digit Sum</th>
-                      <th>Remainder</th>
-                      <th>Factorial (n!)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {q1Result.results.map((item, idx) => (
-                      <tr key={idx}>
-                        <td>{item.n}</td>
-                        <td>{item.digit_sum}</td>
-                        <td>{item.remainder}</td>
-                        <td
-                          style={{
-                            wordBreak: "break-all",
-                            fontSize: "0.85rem",
-                            color: "#cbd5e1",
-                          }}
-                        >
-                          {item.factorial}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </>
-            ) : (
-              <p className="text-warning">{q1Result.message}</p>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* ------------------ CARD 2 ------------------ */}
-      <div
-        className="p-4 rounded-4 shadow-sm"
-        style={{
-          background: "rgba(255, 255, 255, 0.05)",
-          border: "1px solid rgba(255,255,255,0.1)",
-        }}
-      >
-        <h4 className="fw-semibold mb-4" style={{ color: "#f8fafc" }}>
-          B. Consecutive Harshad Numbers
-        </h4>
-        <p style={{ color: "#94a3b8" }}>
-          Find Harshad number streaks by range or by number of consecutive
-          values.
-        </p>
-
-        <div className="d-flex gap-3 mb-4 flex-wrap">
-          <button
-            type="button"
-            className={`btn ${
-              mode === 1 ? "btn-light text-dark" : "btn-outline-light"
-            } w-100 w-md-50 fw-semibold`}
-            style={{ borderRadius: "10px" }}
-            onClick={() => handleModeSelect(1)}
-          >
-            Range
-          </button>
-          <button
-            type="button"
-            className={`btn ${
-              mode === 2 ? "btn-light text-dark" : "btn-outline-light"
-            } w-100 w-md-50 fw-semibold`}
-            style={{ borderRadius: "10px" }}
-            onClick={() => handleModeSelect(2)}
-          >
-            No. of Consecutives
-          </button>
+    <div className="harshad-page">
+      <div className="container py-5">
+        {/* Header */}
+        <div className="text-center mb-5 header-section">
+          <h1 className="display-4 fw-bold text-gradient mb-3">
+            Harshad Numbers
+          </h1>
+          <p className="lead text-muted">
+            Explore factorials and consecutive Harshad sequences
+          </p>
         </div>
 
-        {mode && (
-          <form onSubmit={handleQ2Submit} className="row g-3 mb-4">
-            {mode === 1 ? (
-              <>
-                <div className="col-md-4">
+        {/* Question A - Non-Harshad Factorials */}
+        <div className="card question-card shadow-lg mb-5">
+          <div className="card-header border-0">
+            <div className="d-flex align-items-center gap-3">
+              <span className="badge-question">A</span>
+              <h4 className="mb-0 fw-bold text-white">
+                First Factorials that are{" "}
+                <span className="text-danger">Not Harshad Numbers</span>
+              </h4>
+            </div>
+          </div>
+          <div className="card-body p-4">
+            <form onSubmit={handleQ1Submit}>
+              <div className="row g-3 mb-3">
+                <div className="col-lg-5">
+                  <label className="form-label text-light fw-semibold mb-2">
+                    Start Number
+                  </label>
                   <input
                     type="number"
-                    className="form-control bg-dark border-0 text-light"
-                    placeholder="From (e.g. 2)"
-                    value={startRange}
-                    onChange={(e) => setStartRange(e.target.value)}
+                    className="form-control form-control-lg"
+                    placeholder="e.g., 1"
+                    value={q1Start}
+                    onChange={(e) => setQ1Start(e.target.value)}
                     required
-                    style={{ borderRadius: "10px" }}
                   />
                 </div>
-                <div className="col-md-4">
+                <div className="col-lg-5">
+                  <label className="form-label text-light fw-semibold mb-2">
+                    End Number
+                  </label>
                   <input
                     type="number"
-                    className="form-control bg-dark border-0 text-light"
-                    placeholder="To (e.g. 5)"
-                    value={endRange}
-                    onChange={(e) => setEndRange(e.target.value)}
+                    className="form-control form-control-lg"
+                    placeholder="e.g., 100"
+                    value={q1End}
+                    onChange={(e) => setQ1End(e.target.value)}
                     required
-                    style={{ borderRadius: "10px" }}
                   />
                 </div>
-              </>
-            ) : (
-              <div className="col-md-8">
-                <input
-                  type="number"
-                  className="form-control bg-dark border-0 text-light"
-                  placeholder="Enter consecutive count (e.g. 10)"
-                  value={targetCount}
-                  onChange={(e) => setTargetCount(e.target.value)}
-                  required
-                  style={{ borderRadius: "10px" }}
-                />
+                <div className="col-lg-2 d-flex align-items-end">
+                  <button
+                    type="submit"
+                    className="btn btn-gradient btn-lg w-100"
+                    disabled={q1Loading}
+                  >
+                    {q1Loading ? (
+                      <span className="spinner-border spinner-border-sm"></span>
+                    ) : (
+                      "Find"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {q1Loading && (
+              <div className="text-center py-5 loading-state">
+                <div className="spinner-border text-cyan mb-3" style={{ width: "3rem", height: "3rem" }}></div>
+                <p className="text-muted">Processing factorials...</p>
               </div>
             )}
-            <div className="col-md-4">
-              <button
-                type="submit"
-                className="btn btn-light w-100 fw-semibold text-dark"
-                style={{ borderRadius: "10px" }}
-              >
-                Find
-              </button>
-            </div>
-          </form>
-        )}
 
-        {q2Loading && (
-          <div className="text-center mt-3">
-            <div
-              className="spinner-border text-light"
-              style={{ width: "3rem", height: "3rem" }}
-            ></div>
-            <p className="text-secondary mt-3">
-              Searching consecutive groups...
-            </p>
-          </div>
-        )}
-
-        {q2Result && !q2Loading && (
-          <div
-            className="mt-4 p-3 rounded-3"
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            {mode === 1 && q2Result.range_results ? (
-              <>
-                <h5 className="text-info mb-3">
-                  ✅ Groups within Range {startRange} – {endRange}
-                </h5>
-                <table className="table table-dark table-striped align-middle">
-                  <thead>
-                    <tr>
-                      <th>Group Size</th>
-                      <th>Groups Count</th>
-                      <th>Groups Found</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(q2Result.range_results).map(
-                      ([size, groups], idx) => {
-                        let displayGroups = [];
-
-                        if (Array.isArray(groups)) {
-                          if (Array.isArray(groups[0])) displayGroups = groups;
-                          else displayGroups = [groups];
-                        } else {
-                          displayGroups = [[groups]];
-                        }
-
-                        return (
-                          <tr key={idx}>
-                            <td>{size}</td>
-                            <td>{displayGroups.length}</td>
-                            <td style={{ wordBreak: "break-all" }}>
-                              {displayGroups
-                                .map((g) =>
-                                  Array.isArray(g)
-                                    ? `[${g.join(", ")}]`
-                                    : `[${g}]`
-                                )
-                                .join(" ")}
-                            </td>
+            {q1Result && !q1Loading && (
+              <div className="result-box mt-4">
+                {q1Result.status === "non-harshad-found" ? (
+                  <>
+                    <div className="d-flex align-items-center gap-2 mb-3">
+                      <i className="bi bi-x-circle-fill text-danger fs-4"></i>
+                      <h5 className="mb-0 text-white fw-bold">
+                        Non-Harshad Factorials Found
+                      </h5>
+                    </div>
+                    <div className="table-responsive">
+                      <table className="table table-dark table-hover align-middle modern-table">
+                        <thead>
+                          <tr>
+                            <th>n</th>
+                            <th>Digit Sum</th>
+                            <th>Remainder</th>
+                            <th>Factorial (n!)</th>
                           </tr>
-                        );
-                      }
-                    )}
-                  </tbody>
-                </table>
-              </>
-            ) : mode === 2 && q2Result.streaks ? (
-              <>
-                <h5 className="text-info">
-                  ✅ Found {q2Result.count} streaks of{" "}
-                  {q2Result.streaks[0]?.length}-consecutive Harshads
-                </h5>
-                <ul className="list-group mt-3">
-                  {q2Result.streaks.map((seq, idx) => (
-                    <li
-                      key={idx}
-                      className="list-group-item bg-dark text-light border-0"
-                    >
-                      {seq.join(", ")}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ) : (
-              <p className="text-warning">❌ No results found.</p>
+                        </thead>
+                        <tbody>
+                          {q1Result.results.map((item, idx) => (
+                            <tr key={idx}>
+                              <td className="fw-bold text-cyan">{item.n}</td>
+                              <td>{item.digit_sum}</td>
+                              <td className="text-warning">{item.remainder}</td>
+                              <td className="factorial-cell">{item.factorial}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                ) : (
+                  <div className="alert alert-warning d-flex align-items-center gap-2 mb-0">
+                    <i className="bi bi-info-circle-fill"></i>
+                    {q1Result.message}
+                  </div>
+                )}
+              </div>
             )}
           </div>
-        )}
+        </div>
 
-        <div
-          className="mt-4 p-3 rounded-3"
-          style={{
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          <h6 className="fw-semibold text-light">
-            💡 Why no 20+ consecutive Harshad numbers?
-          </h6>
-          <p className="text-secondary mb-0">
-            Because divisibility depends on the digit sum — eventually, one
-            number breaks the pattern.
-          </p>
+        {/* Question B - Consecutive Harshad Numbers */}
+        <div className="card question-card shadow-lg">
+          <div className="card-header border-0">
+            <div className="d-flex align-items-center gap-3 mb-3">
+              <span className="badge-question badge-success">B</span>
+              <h4 className="mb-0 fw-bold text-white">
+                Consecutive Harshad Numbers
+              </h4>
+            </div>
+            <p className="text-muted mb-0">
+              Find Harshad number streaks by range or by number of consecutive values
+            </p>
+          </div>
+          <div className="card-body p-4">
+            {/* Mode Selection */}
+            <div className="btn-group mode-selector w-100 mb-4" role="group">
+              <button
+                type="button"
+                className={`btn btn-lg ${mode === 1 ? "active" : ""}`}
+                onClick={() => handleModeSelect(1)}
+              >
+                <i className="bi bi-sliders me-2"></i>
+                Range Mode
+              </button>
+              <button
+                type="button"
+                className={`btn btn-lg ${mode === 2 ? "active" : ""}`}
+                onClick={() => handleModeSelect(2)}
+              >
+                <i className="bi bi-123 me-2"></i>
+                Consecutive Count
+              </button>
+            </div>
+
+            {mode && (
+              <form onSubmit={handleQ2Submit}>
+                <div className="row g-3 mb-3">
+                  {mode === 1 ? (
+                    <>
+                      <div className="col-md-5">
+                        <label className="form-label text-light fw-semibold">
+                          From
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control form-control-lg"
+                          placeholder="e.g., 2"
+                          value={startRange}
+                          onChange={(e) => setStartRange(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="col-md-5">
+                        <label className="form-label text-light fw-semibold">
+                          To
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control form-control-lg"
+                          placeholder="e.g., 5"
+                          value={endRange}
+                          onChange={(e) => setEndRange(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="col-md-10">
+                      <label className="form-label text-light fw-semibold">
+                        Consecutive Count
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control form-control-lg"
+                        placeholder="e.g., 10"
+                        value={targetCount}
+                        onChange={(e) => setTargetCount(e.target.value)}
+                        required
+                      />
+                    </div>
+                  )}
+                  <div className="col-md-2 d-flex align-items-end">
+                    <button
+                      type="submit"
+                      className="btn btn-gradient btn-lg w-100"
+                      disabled={q2Loading}
+                    >
+                      {q2Loading ? (
+                        <span className="spinner-border spinner-border-sm"></span>
+                      ) : (
+                        "Find"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            )}
+
+            {q2Loading && (
+              <div className="text-center py-5 loading-state">
+                <div className="spinner-border text-cyan mb-3" style={{ width: "3rem", height: "3rem" }}></div>
+                <p className="text-muted">Searching consecutive groups...</p>
+              </div>
+            )}
+
+            {q2Result && !q2Loading && (
+              <div className="result-box mt-4">
+                {mode === 1 && q2Result.range_results ? (
+                  <>
+                    <div className="d-flex align-items-center gap-2 mb-3">
+                      <i className="bi bi-check-circle-fill text-success fs-4"></i>
+                      <h5 className="mb-0 text-white fw-bold">
+                        Groups within Range {startRange} – {endRange}
+                      </h5>
+                    </div>
+                    <div className="table-responsive">
+                      <table className="table table-dark table-hover align-middle modern-table">
+                        <thead>
+                          <tr>
+                            <th>Group Size</th>
+                            <th>Count</th>
+                            <th>Groups Found</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(q2Result.range_results).map(
+                            ([size, groups], idx) => {
+                              let displayGroups = [];
+                              if (Array.isArray(groups)) {
+                                if (Array.isArray(groups[0])) displayGroups = groups;
+                                else displayGroups = [groups];
+                              } else {
+                                displayGroups = [[groups]];
+                              }
+
+                              return (
+                                <tr key={idx}>
+                                  <td className="fw-bold text-cyan">{size}</td>
+                                  <td className="text-success">{displayGroups.length}</td>
+                                  <td className="groups-cell">
+                                    {displayGroups
+                                      .map((g) =>
+                                        Array.isArray(g)
+                                          ? `[${g.join(", ")}]`
+                                          : `[${g}]`
+                                      )
+                                      .join(" ")}
+                                  </td>
+                                </tr>
+                              );
+                            }
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                ) : mode === 2 && q2Result.streaks ? (
+                  <>
+                    <div className="d-flex align-items-center gap-2 mb-3">
+                      <i className="bi bi-check-circle-fill text-success fs-4"></i>
+                      <h5 className="mb-0 text-white fw-bold">
+                        Found {q2Result.count} streaks of{" "}
+                        {q2Result.streaks[0]?.length}-consecutive Harshads
+                      </h5>
+                    </div>
+                    <div className="streaks-container">
+                      {q2Result.streaks.map((seq, idx) => (
+                        <div key={idx} className="streak-item">
+                          <span className="streak-badge">#{idx + 1}</span>
+                          <span className="streak-values">{seq.join(", ")}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="alert alert-warning d-flex align-items-center gap-2 mb-0">
+                    <i className="bi bi-x-circle-fill"></i>
+                    No results found
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Info Box */}
+            <div className="info-box mt-4">
+              <div className="d-flex gap-3">
+                <i className="bi bi-lightbulb-fill text-warning fs-4"></i>
+                <div>
+                  <h6 className="fw-bold text-white mb-2">
+                    Why no 20+ consecutive Harshad numbers?
+                  </h6>
+                  <p className="text-muted mb-0">
+                    Because divisibility depends on the digit sum — eventually, one
+                    number breaks the pattern.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

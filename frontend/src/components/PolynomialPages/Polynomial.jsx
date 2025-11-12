@@ -17,18 +17,7 @@ const formatPolynomial = (expr) => {
 
 // --- Small reusable UI blocks ---
 const PrettyPre = ({ children }) => (
-  <pre
-    style={{
-      whiteSpace: "pre-wrap",
-      background: "rgba(255,255,255,0.04)",
-      border: "1px solid rgba(255,255,255,0.08)",
-      color: "#e2e8f0",
-      borderRadius: 10,
-      padding: "10px 14px",
-      fontSize: "0.9rem",
-      overflowX: "auto",
-    }}
-  >
+  <pre className="code-block">
     {children}
   </pre>
 );
@@ -56,24 +45,13 @@ const InlineArray = ({ arr }) => {
 const MatrixTable = ({ mat }) => {
   if (!Array.isArray(mat)) return <PrettyPre>{String(mat)}</PrettyPre>;
   return (
-    <div
-      className="table-responsive"
-      style={{ maxHeight: "400px", overflowY: "auto" }}
-    >
-      <table className="table table-dark table-bordered table-sm mb-0 align-middle">
+    <div className="table-responsive matrix-container">
+      <table className="table table-dark table-bordered table-sm mb-0 matrix-table">
         <tbody>
           {mat.map((row, i) => (
             <tr key={i}>
               {row.map((v, j) => (
-                <td
-                  key={j}
-                  style={{
-                    textAlign: "right",
-                    fontFamily: "monospace",
-                    padding: "5px 8px",
-                    fontSize: "0.85rem",
-                  }}
-                >
+                <td key={j} className="matrix-cell">
                   {Number.isFinite(v) ? Number(v).toFixed(6) : String(v)}
                 </td>
               ))}
@@ -85,30 +63,17 @@ const MatrixTable = ({ mat }) => {
   );
 };
 
-const AnswerCard = ({ label, title, children }) => (
-  <div
-    className="mb-4 p-4 rounded-4 shadow-sm"
-    style={{
-      background: "rgba(255,255,255,0.05)",
-      border: "1px solid rgba(255,255,255,0.1)",
-    }}
-  >
-    <div className="d-flex align-items-center mb-3">
-      <span
-        className="badge me-2"
-        style={{
-          backgroundColor: "#3b82f6",
-          fontSize: "0.8rem",
-          padding: "6px 10px",
-        }}
-      >
+const AnswerCard = ({ label, title, children, badgeColor = "primary" }) => (
+  <div className="card result-card shadow-lg mb-4">
+    <div className="card-header border-0 d-flex align-items-center gap-3">
+      <span className={`badge-custom badge-${badgeColor}`}>
         {label}
       </span>
-      <h6 className="fw-semibold mb-0" style={{ color: "#f1f5f9" }}>
-        {title}
-      </h6>
+      <h5 className="mb-0 fw-bold text-white">{title}</h5>
     </div>
-    <div>{children}</div>
+    <div className="card-body">
+      {children}
+    </div>
   </div>
 );
 
@@ -144,203 +109,230 @@ const Polynomial = () => {
   };
 
   return (
-    <div
-      className="py-5 px-3 px-md-5"
-      style={{
-        color: "#e5e7eb",
-        minHeight: "100vh",
-        fontFamily: "Inter, system-ui, sans-serif",
-      }}
-    >
-      <div className="text-center mb-5">
-        <h1
-          style={{
-            fontWeight: 700,
-            fontSize: "2.3rem",
-            color: "#f1f5f9",
-          }}
-        >
-          Modified Legendre Polynomial
-        </h1>
-        <p style={{ color: "#94a3b8" }}>
-          Explore shifted Legendre polynomials and their numerical properties
-        </p>
-      </div>
+    <div className="polynomial-page">
+      <div className="container py-5">
+        {/* Header Section */}
+        <div className="text-center mb-5 header-section">
+          <h1 className="display-4 fw-bold text-gradient mb-3">
+            Modified Legendre Polynomial
+          </h1>
+          <p className="lead text-muted">
+            Explore shifted Legendre polynomials and their numerical properties
+          </p>
+        </div>
 
-      {/* Input Card */}
-      <div
-        className="p-4 mb-5 rounded-4 shadow-sm"
-        style={{
-          background: "rgba(255,255,255,0.05)",
-          border: "1px solid rgba(255,255,255,0.1)",
-        }}
-      >
-        <form onSubmit={submit} className="d-flex flex-wrap align-items-center gap-3">
-          <div>
-            <label className="form-label mb-1" style={{ color: "#cbd5e1" }}>
-              Legendre order (n)
-            </label>
-            <input
-              type="number"
-              className="form-control bg-dark border-0 text-light"
-              value={n}
-              min={0}
-              onChange={(e) => setN(e.target.value)}
-              style={{
-                width: "120px",
-                borderRadius: "10px",
-                padding: "8px 10px",
-              }}
-            />
+        {/* Input Card */}
+        <div className="card input-card shadow-lg mb-5">
+          <div className="card-body p-4">
+            <form onSubmit={submit}>
+              <div className="row g-3 align-items-end">
+                <div className="col-md-4 col-lg-3">
+                  <label className="form-label fw-semibold text-light">
+                    Legendre Order (n)
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control form-control-lg"
+                    value={n}
+                    min={0}
+                    onChange={(e) => setN(e.target.value)}
+                    placeholder="Enter value"
+                  />
+                </div>
+                <div className="col-md-4 col-lg-3">
+                  <button
+                    type="submit"
+                    className="btn btn-gradient btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm" role="status"></span>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <i className="bi bi-play-fill"></i>
+                        Run Pipeline
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </form>
+            {error && (
+              <div className="alert alert-danger mt-3 mb-0 d-flex align-items-center gap-2">
+                <i className="bi bi-exclamation-triangle-fill"></i>
+                {error}
+              </div>
+            )}
           </div>
-          <button
-            type="submit"
-            className="btn btn-light fw-semibold text-dark"
-            style={{
-              borderRadius: "10px",
-              padding: "8px 20px",
-              height: "42px",
-            }}
-          >
-            Run Pipeline
-          </button>
-          {loading && (
-            <div className="spinner-border text-light" role="status"></div>
-          )}
-        </form>
-        {error && (
-          <div className="alert alert-danger mt-3 mb-0 py-2 px-3">
-            {error}
-          </div>
+        </div>
+
+        {/* Results */}
+        {resp && (
+          <>
+            <AnswerCard
+              label="A"
+              title={`Shifted Legendre Polynomial P*ₙ(x), n = ${n}`}
+              badgeColor="info"
+            >
+              <div className="mb-4">
+                <h6 className="text-cyan mb-3">Pretty Form</h6>
+                <PrettyPre>
+                  {formatPolynomial(
+                    resp.P_shifted_pretty ??
+                      resp.P_shifted_str ??
+                      resp.polynomial
+                  )}
+                </PrettyPre>
+              </div>
+
+              <div className="mb-4">
+                <h6 className="text-cyan mb-3">One-Line Form</h6>
+                <PrettyPre>
+                  {formatPolynomial(resp.P_shifted_str ?? resp.polynomial)}
+                </PrettyPre>
+              </div>
+
+              <div>
+                <h6 className="text-cyan mb-3">Coefficients (Highest → Lowest)</h6>
+                <InlineArray arr={resp.coeffs_high ?? resp.coeffs} />
+              </div>
+            </AnswerCard>
+
+            <AnswerCard
+              label="B"
+              title="Companion Matrix (Frobenius Form)"
+              badgeColor="success"
+            >
+              <MatrixTable mat={resp.companion_matrix ?? resp.A} />
+            </AnswerCard>
+
+            <AnswerCard
+              label="C"
+              title="Roots = Eigenvalues (via LU Decomposition)"
+              badgeColor="warning"
+            >
+              <div className="mb-4">
+                <h6 className="text-cyan mb-3">Eigenvalues</h6>
+                <InlineArray arr={resp.eigenvalues ?? resp.roots} />
+              </div>
+
+              <h6 className="text-cyan mb-3">LU Decomposition</h6>
+              <div className="row g-4">
+                {[
+                  { title: "P Matrix", data: resp.P_lu },
+                  { title: "L Matrix", data: resp.L_lu },
+                  { title: "U Matrix", data: resp.U_lu },
+                ].map(({ title, data }, idx) => (
+                  <div className="col-lg-4" key={idx}>
+                    <div className="matrix-wrapper">
+                      <div className="matrix-title">{title}</div>
+                      <MatrixTable mat={data} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </AnswerCard>
+
+            <AnswerCard
+              label="D"
+              title={`Solution of A·x = b (b = {1,2,…,${n}})`}
+              badgeColor="danger"
+            >
+              <div className="row g-4">
+                <div className="col-md-6">
+                  <h6 className="text-cyan mb-3">b Vector</h6>
+                  <InlineArray
+                    arr={
+                      resp.b_vector ??
+                      Array.from({ length: Number(n) }, (_, i) => i + 1)
+                    }
+                  />
+                </div>
+                <div className="col-md-6">
+                  <h6 className="text-cyan mb-3">Determinant det(A)</h6>
+                  <PrettyPre>{String(resp.determinant ?? resp.det)}</PrettyPre>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <h6 className="text-cyan mb-3">Solution Vector x</h6>
+                <InlineArray
+                  arr={resp.x_solution ?? resp.solution ?? resp.x}
+                />
+              </div>
+            </AnswerCard>
+
+            <AnswerCard
+              label="E"
+              title="Newton–Raphson: Smallest & Largest Roots"
+              badgeColor="secondary"
+            >
+              <div className="row g-4 mb-4">
+                <div className="col-md-6">
+                  <div className="stat-box">
+                    <div className="stat-label">Smallest Root</div>
+                    <div className="stat-value">{String(resp.newton_smallest ?? "-")}</div>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="stat-box">
+                    <div className="stat-label">Largest Root</div>
+                    <div className="stat-value">{String(resp.newton_largest ?? "-")}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h6 className="text-cyan mb-3">Iteration Logs</h6>
+                <PrettyPre>
+                  {(resp.newton_logs ?? resp.logs ?? []).join("\n")}
+                </PrettyPre>
+              </div>
+            </AnswerCard>
+
+            {/* Summary Card */}
+            <div className="card summary-card shadow-lg">
+              <div className="card-body">
+                <h5 className="fw-bold text-white mb-4">
+                  <i className="bi bi-clipboard-data me-2"></i>
+                  Summary
+                </h5>
+                <div className="row g-3">
+                  <div className="col-md-4">
+                    <div className="summary-item">
+                      <span className="summary-label">Degree</span>
+                      <span className="summary-value">
+                        {resp.coeffs_high?.length
+                          ? resp.coeffs_high.length - 1
+                          : "?"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="summary-item">
+                      <span className="summary-label">Eigenvalues</span>
+                      <span className="summary-value">
+                        {resp.eigenvalues?.length ?? "?"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="summary-item">
+                      <span className="summary-label">Determinant</span>
+                      <span className="summary-value">
+                        {String(resp.determinant ?? "-")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
-
-      {/* Results */}
-      {resp && (
-        <>
-          <AnswerCard
-            label="A"
-            title={`Shifted Legendre polynomial  P*ₙ(x),  n = ${n}`}
-          >
-            <h6 className="text-secondary small mb-2">Pretty form</h6>
-            <PrettyPre>
-              {formatPolynomial(
-                resp.P_shifted_pretty ??
-                  resp.P_shifted_str ??
-                  resp.polynomial
-              )}
-            </PrettyPre>
-
-            <h6 className="text-secondary small mt-3 mb-2">One-line form</h6>
-            <PrettyPre>
-              {formatPolynomial(resp.P_shifted_str ?? resp.polynomial)}
-            </PrettyPre>
-
-            <h6 className="text-secondary small mt-3 mb-2">
-              Coefficients (highest → lowest)
-            </h6>
-            <InlineArray arr={resp.coeffs_high ?? resp.coeffs} />
-          </AnswerCard>
-
-          <AnswerCard
-            label="B"
-            title="Companion matrix (Frobenius form)"
-          >
-            <MatrixTable mat={resp.companion_matrix ?? resp.A} />
-          </AnswerCard>
-
-          <AnswerCard
-            label="C"
-            title="Roots = Eigenvalues (via LU decomposition)"
-          >
-            <h6 className="text-secondary small mb-2">Eigenvalues</h6>
-            <InlineArray arr={resp.eigenvalues ?? resp.roots} />
-
-            <h6 className="text-secondary small mt-3 mb-2">LU Decomposition</h6>
-            <div className="row g-3">
-              <div className="col-md-4">
-                <h6 className="text-muted small">P</h6>
-                <MatrixTable mat={resp.P_lu} />
-              </div>
-              <div className="col-md-4">
-                <h6 className="text-muted small">L</h6>
-                <MatrixTable mat={resp.L_lu} />
-              </div>
-              <div className="col-md-4">
-                <h6 className="text-muted small">U</h6>
-                <MatrixTable mat={resp.U_lu} />
-              </div>
-            </div>
-          </AnswerCard>
-
-          <AnswerCard
-            label="D"
-            title={`Solution of A·x = b  (b = {1,2,…,${n}})`}
-          >
-            <h6 className="text-secondary small mb-2">b vector</h6>
-            <InlineArray
-              arr={
-                resp.b_vector ??
-                Array.from({ length: Number(n) }, (_, i) => i + 1)
-              }
-            />
-
-            <h6 className="text-secondary small mt-3 mb-2">Determinant det(A)</h6>
-            <PrettyPre>{String(resp.determinant ?? resp.det)}</PrettyPre>
-
-            <h6 className="text-secondary small mt-3 mb-2">
-              Solution vector x
-            </h6>
-            <InlineArray
-              arr={resp.x_solution ?? resp.solution ?? resp.x}
-            />
-          </AnswerCard>
-
-          <AnswerCard
-            label="E"
-            title="Newton–Raphson smallest & largest roots"
-          >
-            <div className="row">
-              <div className="col-md-6">
-                <h6 className="text-muted small">Smallest</h6>
-                <PrettyPre>{String(resp.newton_smallest ?? "-")}</PrettyPre>
-              </div>
-              <div className="col-md-6">
-                <h6 className="text-muted small">Largest</h6>
-                <PrettyPre>{String(resp.newton_largest ?? "-")}</PrettyPre>
-              </div>
-            </div>
-
-            <h6 className="text-secondary small mt-3 mb-2">
-              Iteration logs
-            </h6>
-            <PrettyPre>
-              {(resp.newton_logs ?? resp.logs ?? []).join("\n")}
-            </PrettyPre>
-          </AnswerCard>
-
-          <div
-            className="p-4 rounded-4 shadow-sm mt-4"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            <h6 className="fw-semibold text-light mb-3">Summary</h6>
-            <ul className="mb-0 text-secondary small">
-              <li>
-                Degree: {resp.coeffs_high?.length
-                  ? resp.coeffs_high.length - 1
-                  : "?"}
-              </li>
-              <li>
-                Eigenvalues: {resp.eigenvalues?.length ?? "?"}
-              </li>
-              <li>Determinant: {String(resp.determinant ?? "-")}</li>
-            </ul>
-          </div>
-        </>
-      )}
     </div>
   );
 };
